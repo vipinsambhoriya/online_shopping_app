@@ -16,13 +16,15 @@ phases:
       - npm config set registry https://registry.npmjs.org/
 
   pre_build:
-    commands:
-      - echo Logging in to Docker Hub...
-      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
-      - IMAGE_REPO_NAME="tws-online-shop-app-demo"
-      - IMAGE_NAME="$DOCKER_REGISTRY_USERNAME/$IMAGE_REPO_NAME"
-      - echo Docker image name is $IMAGE_NAME
-
+  commands:
+    - echo "Checking Docker credentials..."
+    - if [ -z "$DOCKER_REGISTRY_USERNAME" ]; then echo "ERROR: Username is EMPTY"; else echo "Username is SET"; fi
+    - if [ -z "$DOCKER_REGISTRY_PASSWORD" ]; then echo "ERROR: Password is EMPTY"; else echo "Password is SET"; fi
+    - echo "Username length: ${#DOCKER_REGISTRY_USERNAME}"
+    - echo "Password length: ${#DOCKER_REGISTRY_PASSWORD}"
+    - echo "Attempting Docker Hub login..."
+    - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+    
   build:
     commands:
       - echo Build started on `date`
