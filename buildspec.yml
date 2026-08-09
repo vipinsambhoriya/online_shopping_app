@@ -36,11 +36,13 @@ pre_build:
 
   post_build:
     commands:
-      - echo "Build completed on `date`"
-      - echo "Pushing Docker image..."
-      - 'docker push "$IMAGE_NAME:latest"'
-      - echo "Writing image definitions file..."
-      - 'printf ''[{"name":"web","imageUri":"%s"}]'' "$IMAGE_NAME:latest" > imageDefinitions.json'
+      - echo Build completed on `date`
+      - echo Pushing the Docker image to Docker Hub...
+      - docker push $IMAGE_NAME:latest
+      - echo Uploading zip file to S3...
+      - aws s3 cp online-shop-app.zip s3://tws-online-shop-demo/online-shop-app/
+      - echo Writing image definitions file...
+      - printf '[{"name":"web","imageUri":"%s"}]' "$IMAGE_NAME:latest" > imageDefinitions.json
       - cat imageDefinitions.json
 
 artifacts:
