@@ -15,17 +15,16 @@ phases:
       - npm --version
       - npm config set registry https://registry.npmjs.org/
 
-  pre_build:
-    commands:
-      - echo "Checking Docker credentials..."
-      - 'if [ -z "$DOCKER_REGISTRY_USERNAME" ]; then echo "USERNAME IS EMPTY"; else echo "USERNAME IS SET"; fi'
-      - 'if [ -z "$DOCKER_REGISTRY_PASSWORD" ]; then echo "PASSWORD IS EMPTY"; else echo "PASSWORD IS SET"; fi'
-      - 'echo "Username length: ${#DOCKER_REGISTRY_USERNAME}"'
-      - 'echo "Password length: ${#DOCKER_REGISTRY_PASSWORD}"'
-      - echo "Docker version:"
-      - docker --version
-      - echo "Trying Docker login..."
-      - 'docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin <<< "$DOCKER_REGISTRY_PASSWORD" 2>&1 || true'
+pre_build:
+  commands:
+    - echo "Checking Docker credentials..."
+    - 'if [ -z "$DOCKER_REGISTRY_USERNAME" ]; then echo "USERNAME EMPTY"; else echo "USERNAME EXISTS"; fi'
+    - 'if [ -z "$DOCKER_REGISTRY_PASSWORD" ]; then echo "PASSWORD EMPTY"; else echo "PASSWORD EXISTS"; fi'
+    - echo "Docker version:"
+    - docker --version
+    - echo "Trying Docker login..."
+    - 'printf "%s\n" "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin'
+    - echo "Docker login completed successfully"
 
   build:
     commands:
