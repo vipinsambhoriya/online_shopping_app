@@ -11,37 +11,37 @@ phases:
       nodejs: 12
     commands:
       - echo "Installing Node.js and npm..."
-      - npm --version
       - node --version
+      - npm --version
       - npm config set registry https://registry.npmjs.org/
 
   pre_build:
     commands:
       - echo "Checking Docker credentials..."
-      - if [ -z "$DOCKER_REGISTRY_USERNAME" ]; then echo "USERNAME IS EMPTY"; else echo "USERNAME IS SET"; fi
-      - if [ -z "$DOCKER_REGISTRY_PASSWORD" ]; then echo "PASSWORD IS EMPTY"; else echo "PASSWORD IS SET"; fi
-      - echo "Username length: ${#DOCKER_REGISTRY_USERNAME}"
-      - echo "Password length: ${#DOCKER_REGISTRY_PASSWORD}"
+      - 'if [ -z "$DOCKER_REGISTRY_USERNAME" ]; then echo "USERNAME IS EMPTY"; else echo "USERNAME IS SET"; fi'
+      - 'if [ -z "$DOCKER_REGISTRY_PASSWORD" ]; then echo "PASSWORD IS EMPTY"; else echo "PASSWORD IS SET"; fi'
+      - 'echo "Username length: ${#DOCKER_REGISTRY_USERNAME}"'
+      - 'echo "Password length: ${#DOCKER_REGISTRY_PASSWORD}"'
       - echo "Docker version:"
       - docker --version
       - echo "Trying Docker login..."
-      - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+      - 'echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin'
 
   build:
     commands:
       - echo "Build started on `date`"
       - echo "Building Docker image..."
-      - IMAGE_REPO_NAME="tws-online-shop-app-demo"
-      - IMAGE_NAME="$DOCKER_REGISTRY_USERNAME/$IMAGE_REPO_NAME"
-      - docker build -t "$IMAGE_NAME:latest" .
+      - 'IMAGE_REPO_NAME="tws-online-shop-app-demo"'
+      - 'IMAGE_NAME="$DOCKER_REGISTRY_USERNAME/$IMAGE_REPO_NAME"'
+      - 'docker build -t "$IMAGE_NAME:latest" .'
 
   post_build:
     commands:
       - echo "Build completed on `date`"
       - echo "Pushing Docker image..."
-      - docker push "$IMAGE_NAME:latest"
+      - 'docker push "$IMAGE_NAME:latest"'
       - echo "Writing image definitions file..."
-      - printf '[{"name":"web","imageUri":"%s"}]' "$IMAGE_NAME:latest" > imageDefinitions.json
+      - 'printf ''[{"name":"web","imageUri":"%s"}]'' "$IMAGE_NAME:latest" > imageDefinitions.json'
       - cat imageDefinitions.json
 
 artifacts:
